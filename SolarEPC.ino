@@ -1,5 +1,5 @@
 
- // Dave Davies @dodavies This code runs in my own board as a charge rate controller for use with a Rolec/Mainline EPC
+// Dave Davies @dodavies This code runs in my own board as a charge rate controller for use with a Rolec/Mainline EPC
 // Huge credit to @openenergymonitor & other contributors without them this would not be possible, buy lots of boards from them :-)
 // You can find full details on the project at openenergymonitor.org
 // This code will work in an emontx2 and is expecting to see data from an emontx3 on id9
