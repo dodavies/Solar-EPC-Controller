@@ -1,4 +1,4 @@
-// Dave Davies @dodavies This code runs in my own board as a charge rate controller for use with a Rolec/Mainline EPC
+/ Dave Davies @dodavies This code runs in my own board as a charge rate controller for use with a Rolec/Mainline EPC
 // Huge credit to @openenergymonitor & other contributors without them this would not be possible, buy lots of boards from them :-)
 // You can find full details on the project at openenergymonitor.org
 // This code will work in an emontx2 and is expecting to see data from an emontx3 on id9
@@ -13,8 +13,8 @@ const int slaveSelectPin = 6; // Slave Select Pin To talk to the AD5206 digital 
 typedef struct { int power1, power2, power3, power4, Vrms, temp; } PayloadTX; //standard stuff in emontx, we only care about solar on 2/4
 PayloadTX emontx;  // stand emon stuff
 const int emonTx_NodeID=9; //emonTx3 node ID default is 10 mine is 9
-unsigned long currentTime;
-unsigned long previousTime;
+unsigned long time;
+long times;
 int cloud = 10;
 void setup() {
 rf12_initialize(myNodeID,RF_freq,network);   //Initialize RFM12 Radio with settings as defined above
@@ -40,7 +40,7 @@ void digitalPotWrite(int address, int value) {
   digitalWrite(slaveSelectPin,HIGH); 
 }  
 void loop() {
-currentTime = millis(); //Time = Milli since controller switch on. Reset approx 50 days.
+time = millis(); //Time = Milli since controller switch on. Reset approx 50 days.
 if (rf12_recvDone()){    
   if (rf12_crc == 0 && (rf12_hdr & RF12_HDR_CTL) == 0)
   {
@@ -52,17 +52,21 @@ if (rf12_recvDone()){
        Serial.println(" "); 
        
        if (emontx.power2+emontx.power4 < 1600){ // If Solar is less than 1600w set the pot to 0 ohms switching off charging
-       previousTime= millis();
-       if (currentTime - previousTime > 300000) // If Solar is less than 1600w set the pot to 0 ohms switching off charging
+       times = times + 1;
+       delay(10);
+       if (time = times + 300000) // If Solar is less than 1600w set the pot to 0 ohms switching off charging
        digitalPotWrite(3,0);
        digitalPotWrite(1,0); // the jumper must be set in the board but this halves the value so needs adjustment to suit
+       times=0;
        if (emontx.power2+emontx.power4 > 1600 < 3300 ){ // If Solar is 1600 - 3000W set the pot to 196 ohms 6A
        digitalPotWrite(3,4);
        digitalPotWrite(1,4); // the jumper must be set in the board but this halves the value so needs adjustment to suit
+       times=0;
        if (emontx.power2+emontx.power4 > 3300){ // If Solar is  more than 3300W set the pot to 729 ohms 32A
        digitalPotWrite(3,18);
        digitalPotWrite(1,18); // the jumper must be set in the board but this halves the value so needs adjustment to suit 
-       }   
+       times=0;
+     }   
  }
 }else
 { 
