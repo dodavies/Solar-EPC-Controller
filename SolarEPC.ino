@@ -1,4 +1,3 @@
-
 // Dave Davies @dodavies This code runs in my own board as a charge rate controller for use with a Rolec/Mainline EPC
 // Huge credit to @openenergymonitor & other contributors without them this would not be possible, buy lots of boards from them :-)
 // You can find full details on the project at openenergymonitor.org
@@ -14,6 +13,9 @@ const int slaveSelectPin = 6; // Slave Select Pin To talk to the AD5206 digital 
 typedef struct { int power1, power2, power3, power4, Vrms, temp; } PayloadTX; //standard stuff in emontx, we only care about solar on 2/4
 PayloadTX emontx;  // stand emon stuff
 const int emonTx_NodeID=9; //emonTx3 node ID default is 10 mine is 9
+unsigned long time;
+unsigned long times;
+int cloud = 10;
 void setup() {
 rf12_initialize(myNodeID,RF_freq,network);   //Initialize RFM12 Radio with settings as defined above
 delay(200); //wait for Radio to calm down a bit before firing into the main setup
@@ -38,7 +40,7 @@ void digitalPotWrite(int address, int value) {
   digitalWrite(slaveSelectPin,HIGH); 
 }  
 void loop() {
-  
+time = millis(); //Time = Milli since controller switch on. Reset approx 50 days.
 if (rf12_recvDone()){    
   if (rf12_crc == 0 && (rf12_hdr & RF12_HDR_CTL) == 0)
   {
@@ -48,7 +50,10 @@ if (rf12_recvDone()){
        Serial.print("SolarOutput - Watts: "); Serial.println(emontx.power4+emontx.power2);
        Serial.print("GridVoltage: "); Serial.println(emontx.Vrms/100);
        Serial.println(" "); 
+       
        if (emontx.power2+emontx.power4 < 1600){ // If Solar is less than 1600w set the pot to 0 ohms switching off charging
+       times = millis();
+       if (time = times + 300000) // If Solar is less than 1600w set the pot to 0 ohms switching off charging
        digitalPotWrite(3,0);
        digitalPotWrite(1,0); // the jumper must be set in the board but this halves the value so needs adjustment to suit
        if (emontx.power2+emontx.power4 > 1600 < 3300 ){ // If Solar is 1600 - 3000W set the pot to 196 ohms 6A
