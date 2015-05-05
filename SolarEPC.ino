@@ -3,7 +3,8 @@
 // You can find full details on the project at openenergymonitor.org
 // This code will work in an emontx2 and is expecting to see data from an emontx3 on id9
 // My dedicated board has a 'parallelling' output which allows you to half the resistance seen on the EPC terminals
-// The documentation suggests anything under 50 ohms will cause shutdown of the charger,the wiper resistance is about 40 ohms so using the two jumpers allows 20ohms which will shut the charger down.
+// The documentation suggests anything under 50 ohms will cause shutdown of the charger,the wiper resistance is about 40 ohms
+// so using the two jumpers allows 20ohms which will shut the charger down but I found no jumpers works fine.
 #include <JeeLib.h>
 #define myNodeID 30 //node ID of rx, not really important for rx
 #define network 212 //network group 212 for use in my setup you should change this so suit your own
