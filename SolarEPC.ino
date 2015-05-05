@@ -4,8 +4,6 @@
 // This code will work in an emontx2 and is expecting to see data from an emontx3 on id9
 // My dedicated board has a 'parallelling' output which allows you to half the resistance seen on the EPC terminals
 // The documentation suggests anything under 50 ohms will cause shutdown of the charger,the wiper resistance is about 40 ohms so using the two jumpers allows 20ohms which will shut the charger down.
-// This version does not take into account grid loading, so you may wish to subtract that !
-
 #include <JeeLib.h>
 #define myNodeID 30 //node ID of rx, not really important for rx
 #define network 212 //network group 212 for use in my setup you should change this so suit your own
@@ -51,12 +49,12 @@ void loop() {
         Serial.print("SolarOutput - Watts: "); Serial.println(emontx.power4 + emontx.power2);
         Serial.print("GridVoltage: "); Serial.println(emontx.Vrms / 100);
         Serial.println(" ");
-        if (emontx.power2 + emontx.power4 < 1200) { // If Solar is less than 1600w set the pot to 0 ohms switching off charging
-          digitalPotWrite(3, 0); // Switch Off
+        if (emontx.power2 + emontx.power4 < 1600) { // If Solar is less than 1600w set the pot to 0 ohms switching off charging
+          digitalPotWrite(3, 0); // off
           digitalPotWrite(1, 0); // the jumper must be set in the board but this halves the value so needs adjustment to suit
         }
         else if (emontx.power2 + emontx.power4 > 1600 < 3300 ) { // If Solar is 1600 - 3000W set the pot to 196 ohms 6A
-          digitalPotWrite(3, 4); //6A
+          digitalPotWrite(3, 4); // 6A
           digitalPotWrite(1, 4); // the jumper must be set in the board but this halves the value so needs adjustment to suit
         }
         else if (emontx.power2 + emontx.power4 > 3300) { // If Solar is  more than 3300W set the pot to 729 ohms 16A
@@ -74,7 +72,7 @@ void loop() {
           //8 = 349  ohms 16A zcw says it should be 348 ohms
           //18 = 729 ohms 32A zcw says it should be 732 ohms
 
-          digitalPotWrite(3, 18); // sets other circumstances to 32A
+          digitalPotWrite(3, 18); // 32A
           digitalPotWrite(1, 18); // the jumper must be set in the board but this halves the value so needs adjustment to suit
 
         }
