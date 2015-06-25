@@ -51,7 +51,7 @@ void loop() {
 	if (node_id == emonTx_NodeID)  { //check data is coming from node with the correct ID
 	emontx = *(PayloadTX*) rf12_data; // Extract the data from the payload
 	int power = emontx.power4 + emontx.power2; //create a place to store pv power
-	average = ((SAMPLES - 1) * average + power) // create the average power based on solar samples
+	average = ((SAMPLES - 1) * average + power); // create the average power based on solar samples
 	Serial.print("SolarOutput - Watts: "); Serial.println(power); // show our pv power via serial
 	Serial.print("Average SolarOutput - Watts: "); Serial.println(average); //show our pv power via serial
 	Serial.print("GridVoltage: "); Serial.println(emontx.Vrms / 100);
