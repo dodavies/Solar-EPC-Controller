@@ -22,10 +22,6 @@ void setup() {
   Serial.begin(9600); //serial comms speed
   Serial.println("Solar EPC Controller"); //serial banner
   Serial.println("@dodavies 2014"); //serial banner
-  Serial.print("Freq: "); //serial banner
-  Serial.print("868Mhz"); //serial banner
-  Serial.print(" Network: "); //serial banner
-  Serial.println(network); //serial banner
   pinMode (slaveSelectPin, OUTPUT);
   SPI.begin();
 }
@@ -47,23 +43,39 @@ void loop() {
       int node_id = (rf12_hdr & 0x1F); //extract nodeID from payload
       if (node_id == emonTx_NodeID)  { //check data is coming from node with the correct ID
         emontx = *(PayloadTX*) rf12_data; // Extract the data from the payload
+        int power = emontx.power4 + emontx.power2; //create a place to store pv power
+        int realvolts = emontx.Vrms / 100;
         Serial.print("SolarOutput - Watts: "); Serial.println(emontx.power4 + emontx.power2);
-        Serial.print("GridVoltage: "); Serial.println(emontx.Vrms / 100);
         Serial.println(" ");
         if (emontx.power2 + emontx.power4 < 1600) { // If Solar is less than 1600w set the pot to 0 ohms switching off charging
           digitalPotWrite(3, 0); // off
-          digitalPotWrite(1, 0); // the jumper must be set in the board but this halves the value so needs adjustment to suit
+          digitalPotWrite(1, 0); // the parallelling jumper must be set in the board but this halves the value so needs adjustment to suit
+          Serial.print("Insufficient Solar Charging Switched Off");
         }
-        else if (emontx.power2 + emontx.power4 > 1600 < 3300 ) { // If Solar is 1600 - 3000W set the pot to 196 ohms 6A
+        else if (emontx.power2 + emontx.power4 > 1600 < 2300 ) { // If Solar is 1600 - 3000W set the pot to 196 ohms 6A
           digitalPotWrite(3, 4); // 6A
-          digitalPotWrite(1, 4); // the jumper must be set in the board but this halves the value so needs adjustment to suit
+          digitalPotWrite(1, 0); // the parallelling jumper must be set in the board but this halves the value so needs adjustment to suit
+          Serial.print("Charging EV at 6A");
+          Serial.println(" ");
+          Serial.print("Actual Power From Solar in Amps: ");Serial.println(power / realvolts);
         }
-        else if (emontx.power2 + emontx.power4 > 3300) { // If Solar is  more than 3300W set the pot to 729 ohms 16A
-          digitalPotWrite(3, 8); // 16A
-          digitalPotWrite(1, 8); // the jumper must be set in the board but this halves the value so needs adjustment to suit
-
+        else if (emontx.power2 + emontx.power4 > 2300 < 2900 ) { // If Solar is  more than 3300W set the pot to 235 ohms 9A
+          digitalPotWrite(3, 5); // Set the Pot to 235 ohms to charge at 9A
+          digitalPotWrite(1, 0); // the parallelling jumper must be set in the board but this halves the value so needs adjustment to suit
+          Serial.print("Charging at 9A");
+          Serial.println(" ");
+          Serial.print("Actual Solar Output in Amps: ");Serial.println(power / realvolts);
 
         }
+         else if (emontx.power2 + emontx.power4 > 2900 < 3300) { // If Solar is  more than 3300W set the pot to 349 ohms 16A
+          digitalPotWrite(3, 8); // Set the Pot to 349 ohms to charge at 16Amps
+          digitalPotWrite(1, 0); // the parallelling jumper must be set in the board but this halves the value so needs adjustment to suit
+          Serial.print("Charging at 16A");
+          Serial.println(" ");
+          Serial.print("Actual Solar Output in Amps: ");Serial.println(power / realvolts);
+
+        }
+        
         else
         {
           // set the pot value to 4 for 6A i.e if it is lower than 1600w, probably need more stuff but this is a start
@@ -74,8 +86,10 @@ void loop() {
           //18 = 729 ohms 32A zcw says it should be 732 ohms
 
           digitalPotWrite(3, 18); // 32A
-          digitalPotWrite(1, 18); // the jumper must be set in the board but this halves the value so needs adjustment to suit
-
+          digitalPotWrite(1, 0); // the jumper must be set in the board but this halves the value so needs adjustment to suit
+          Serial.print("Charging at 32A");
+          Serial.println(" ");
+          Serial.print("Actual Solar Output in Amps: ");Serial.println(power / realvolts);
         }
       }
     }
