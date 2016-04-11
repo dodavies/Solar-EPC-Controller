@@ -47,19 +47,19 @@ void loop() {
         int realvolts = emontx.Vrms / 100;
         Serial.print("SolarOutput - Watts: "); Serial.println(emontx.power4 + emontx.power2);
         Serial.println(" ");
-        if (emontx.power2 + emontx.power4 < 1600) { // If Solar is less than 1600w set the pot to 0 ohms switching off charging
+        if (power < 1600) { // If Solar is less than 1600w set the pot to 0 ohms switching off charging
           digitalPotWrite(3, 0); // off
           digitalPotWrite(1, 0); // the parallelling jumper must be set in the board but this halves the value so needs adjustment to suit
           Serial.print("Insufficient Solar Charging Switched Off");
         }
-        else if (emontx.power2 + emontx.power4 > 1600 < 2300 ) { // If Solar is 1600 - 3000W set the pot to 196 ohms 6A
+        else if (power > 1600 && < 2300 ) { // If Solar is 1600 - 3000W set the pot to 196 ohms 6A
           digitalPotWrite(3, 4); // 6A
           digitalPotWrite(1, 0); // the parallelling jumper must be set in the board but this halves the value so needs adjustment to suit
           Serial.print("Charging EV at 6A");
           Serial.println(" ");
           Serial.print("Actual Power From Solar in Amps: ");Serial.println(power / realvolts);
         }
-        else if (emontx.power2 + emontx.power4 > 2300 < 2900 ) { // If Solar is  more than 3300W set the pot to 235 ohms 9A
+        else if (power > 2300 && < 2900 ) { // If Solar is  more than 3300W set the pot to 235 ohms 9A
           digitalPotWrite(3, 5); // Set the Pot to 235 ohms to charge at 9A
           digitalPotWrite(1, 0); // the parallelling jumper must be set in the board but this halves the value so needs adjustment to suit
           Serial.print("Charging at 9A");
@@ -67,7 +67,7 @@ void loop() {
           Serial.print("Actual Solar Output in Amps: ");Serial.println(power / realvolts);
 
         }
-         else if (emontx.power2 + emontx.power4 > 2900 < 3300) { // If Solar is  more than 3300W set the pot to 349 ohms 16A
+         else if (power > 2900 && < 3300) { // If Solar is  more than 3300W set the pot to 349 ohms 16A
           digitalPotWrite(3, 8); // Set the Pot to 349 ohms to charge at 16Amps
           digitalPotWrite(1, 0); // the parallelling jumper must be set in the board but this halves the value so needs adjustment to suit
           Serial.print("Charging at 16A");
