@@ -52,14 +52,14 @@ void loop() {
           digitalPotWrite(1, 0); // the parallelling jumper must be set in the board but this halves the value so needs adjustment to suit
           Serial.print("Insufficient Solar Charging Switched Off");
         }
-        else if (power > 1600  < 1900 ) { // If Solar is 1600 - 1900W set the pot to 196 ohms 6A
+        else if (power > 1600  && power < 1900 ) { // If Solar is 1600 - 1900W set the pot to 196 ohms 6A
           digitalPotWrite(3, 4); // 6A
           digitalPotWrite(1, 0); // the parallelling jumper must be set in the board but this halves the value so needs adjustment to suit
           Serial.print("Charging EV at 6A");
           Serial.println(" ");
           Serial.print("Actual Power From Solar in Amps: ");Serial.println(power / realvolts);
         }
-        else if (power > 1901  < 2500 ) { // If Solar is  more than 2500W set the pot to 235 ohms 9A
+        else if (power > 1901  && power < 2500 ) { // If Solar is  more than 2500W set the pot to 235 ohms 9A
           digitalPotWrite(3, 5); // Set the Pot to 235 ohms to charge at 9A
           digitalPotWrite(1, 0); // the parallelling jumper must be set in the board but this halves the value so needs adjustment to suit
           Serial.print("Charging at 9A");
@@ -67,7 +67,7 @@ void loop() {
           Serial.print("Actual Solar Output in Amps: ");Serial.println(power / realvolts);
 
         }
-         else if (power > 2500  < 3300) { // If Solar is  more than 2500W set the pot to 273 ohms 11A
+         else if (power > 2500  && power < 3300) { // If Solar is  more than 2500W set the pot to 273 ohms 11A
           digitalPotWrite(3, 6); // Set the Pot to 273 ohms to charge at 11Amps
           digitalPotWrite(1, 0); // the parallelling jumper must be set in the board but this halves the value so needs adjustment to suit
           Serial.print("Charging at 11A");
