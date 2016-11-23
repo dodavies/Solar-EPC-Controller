@@ -79,6 +79,7 @@ void loop() {
         else
         {
           // set the pot value to 4 for 6A i.e if it is lower than 1600w, probably need more stuff but this is a start
+          //0 = off
           //4 = 196  ohms 6A zcw says it should be 191 ohms
           //5 = 235  ohms 9A zcw says it should be 237 ohms
           //6 = 273  ohms 11A zcw says it should be 267 ohms
